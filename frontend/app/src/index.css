@@ -14,7 +14,10 @@
 
 body {
     margin: 0;
-    background-color: var(--dark-red);
+    height: 100%;
+    background-color: var(--blue);
+    font-family: sans-serif;
+    overflow-x: hidden;
 }
 
 h1,

@@ -9,12 +9,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import authReducer from './store/reducers/auth';
-import { watchAuth } from './store/sagas';
+import pokedexReducer from './store/reducers/pokedex';
+import pokemonReducer from './store/reducers/pokemon';
+import { watchAuth, watchPokedex, watchPokemon } from './store/sagas';
 
 const composeEnhancers = (process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null) || compose;
 
 const rootReducer = combineReducers({
-    auth: authReducer
+    auth: authReducer,
+    pokedex: pokedexReducer,
+    pokemon: pokemonReducer
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -23,7 +27,12 @@ const store = createStore(rootReducer, composeEnhancers(
     applyMiddleware(sagaMiddleware)
 ));
 
+
+
+
 sagaMiddleware.run(watchAuth);
+sagaMiddleware.run(watchPokedex);
+sagaMiddleware.run(watchPokemon);
 
 ReactDOM.render(
     <Provider store={ store }>

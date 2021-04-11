@@ -9,3 +9,17 @@ export {
     authFail,
     checkAuthTimeout
 } from './auth';
+
+export {
+    pokedexListLoadStart,
+    pokedexListLoadSuccess,
+    pokedexListLoadFail,
+    pokedexListLoad,
+} from './pokedex';
+
+export {
+    pokedexPokemonLoadStart,
+    pokedexPokemonLoadSuccess,
+    pokedexPokemonLoadFail,
+    pokedexPokemonLoad
+} from './pokemon';
