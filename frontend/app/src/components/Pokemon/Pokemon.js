@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(2),
         margin: 'auto',
         maxWidth: 850,
+        backgroundColor: 'rgba(26, 53, 88, .3)'
     },
     image: {
         width: 180,

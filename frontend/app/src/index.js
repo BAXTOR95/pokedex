@@ -27,9 +27,6 @@ const store = createStore(rootReducer, composeEnhancers(
     applyMiddleware(sagaMiddleware)
 ));
 
-
-
-
 sagaMiddleware.run(watchAuth);
 sagaMiddleware.run(watchPokedex);
 sagaMiddleware.run(watchPokemon);

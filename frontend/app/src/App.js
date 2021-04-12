@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense } from 'react';
-import { Route, Switch, withRouter } from 'react-router-dom';
+import { Route, Switch, withRouter,  } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Logout from './containers/Auth/Logout/Logout';
 import * as actions from './store/actions/index';

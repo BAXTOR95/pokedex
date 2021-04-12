@@ -15,6 +15,15 @@ export {
     pokedexListLoadSuccess,
     pokedexListLoadFail,
     pokedexListLoad,
+    addCapturedPokemon,
+    addCapturedPokemonSuccess,
+    addCapturedPokemonFailed,
+    removeCapturedPokemon,
+    removeCapturedPokemonSuccess,
+    removeCapturedPokemonFailed,
+    fetchCapturedPokemons,
+    fetchCapturedPokemonsSuccess,
+    fetchCapturedPokemonsFailed
 } from './pokedex';
 
 export {
