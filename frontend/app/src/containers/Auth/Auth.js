@@ -1,15 +1,55 @@
 import React, { useState, useEffect } from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Link from '@material-ui/core/Link';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
-import Input from '../../components/UI/Input/Input';
 import Spinner from '../../components/UI/Spinner/Spinner';
-import Button from '../../components/UI/Button/Button';
-import classes from './Auth.module.css';
+// import Button from '../../components/UI/Button/Button';
 import * as actions from '../../store/actions/index';
 import { updateObject, checkValidity } from '../../shared/utility';
+import backgroundPokedex from '../../assets/images/pokeball_wallpaper.jpg';
+
+const useStyles = makeStyles((theme) => ({
+    rootLogin: {
+        height: '92.8vh',
+    },
+    image: {
+        backgroundImage: `url(${ backgroundPokedex })`,
+        backgroundRepeat: 'no-repeat',
+        backgroundColor:
+            theme.palette.type === 'light' ? theme.palette.grey[ 50 ] : theme.palette.grey[ 900 ],
+        backgroundSize: 'cover',
+        backgroundPosition: 'right',
+    },
+    paper: {
+        margin: theme.spacing(25, 4),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+}));
 
 const Auth = props => {
+    const classes = useStyles();
 
     const { authRedirectPath, onSetAuthRedirectPath } = props;
 
@@ -81,16 +121,18 @@ const Auth = props => {
     }
 
     let form = fromElementsArray.map(formElement => (
-        <Input
+        <TextField
             key={ formElement.id }
-            elementType={ formElement.config.elementType }
-            elementConfig={ formElement.config.elementConfig }
-            value={ formElement.config.value }
-            invalid={ !formElement.config.valid }
-            shouldValidate={ formElement.config.validation }
-            touched={ formElement.config.touched }
-            valueType={ formElement.config.elementConfig.type }
-            changed={ (event) => inputChangedHandler(event, formElement.id) }
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name={ formElement.id }
+            label={ formElement.config.elementConfig.placeholder }
+            type={ formElement.config.elementConfig.type }
+            id={ formElement.id }
+            error={ !formElement.config.valid && formElement.config.touched }
+            onChange={ (event) => inputChangedHandler(event, formElement.id) }
         />
     ));
 
@@ -112,19 +154,43 @@ const Auth = props => {
     }
 
     return (
-        <div className={ classes.Auth }>
-            {authRedirect }
-            {errorMessage }
-            <form onSubmit={ submitHandler }>
-                { form }
-                <Button btnType="Success">SUBMIT</Button>
-            </form>
-            <Button
-                clicked={ switchAuthModeHandler }
-                btnType="Danger">SWITCH TO { isSignup ? 'SIGNIN' : 'SIGNUP' }</Button>
-        </div>
+        <Grid container component="main" className={ classes.rootLogin }>
+            <Grid item xs={ false } sm={ 4 } md={ 7 } className={ classes.image } />
+            <Grid item xs={ 12 } sm={ 8 } md={ 5 } component={ Paper } elevation={ 6 } square>
+                <div className={ classes.paper }>
+                    <Avatar className={ classes.avatar }>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        { isSignup ? 'Sign Up' : 'Sign In' }
+                    </Typography>
+                    { authRedirect }
+                    { errorMessage }
+                    <form className={ classes.form } onSubmit={ submitHandler }>
+                        { form }
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={ classes.submit }
+                        >
+                            { isSignup ? 'Sign Up' : 'Sign In' }
+                        </Button>
+                        <Grid container>
+                            <Grid item xs>
+                                <Link href="#" variant="body2" onClick={ switchAuthModeHandler }>
+                                    { isSignup ? "Already have an account? Sign In" : "Don't have an account? Sign Up" }
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </div>
+            </Grid>
+        </Grid>
     );
 }
+
 
 const mapStateToProps = state => {
     return {
@@ -141,7 +207,5 @@ const mapDispatchToProps = dispatch => {
         onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath('/'))
     };
 };
-
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

@@ -56,7 +56,7 @@ export function* addCapturedPokemon(action) {
 
 export function* removeCapturedPokemon(action) {
     try {
-        const response = yield axiosDb.delete(`/capturedPokemons/${action.id}.json?auth=` + action.token);
+        yield axiosDb.delete(`/capturedPokemons/${action.id}.json?auth=` + action.token);
         yield put(actions.removeCapturedPokemonSuccess(action.id));
     } catch (error) {
         yield put(actions.removeCapturedPokemonFailed(error));

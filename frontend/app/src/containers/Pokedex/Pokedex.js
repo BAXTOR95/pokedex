@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { Grid } from '@material-ui/core';
 import { Route } from 'react-router-dom';
@@ -85,22 +85,6 @@ export const Pokedex = props => {
                                 path={ '/:pokemonId' }
                                 component={ Pokemon } />
                             { !pokemonData && !loadingPokemon && !errorPokemon && <Typography>Select a Pokemon to see its details</Typography> }
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion square expanded={ expanded === 'panel2' } onChange={ handleChange('panel2') }>
-                        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-                            <Typography>Abilities</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>Pokemon Abilities</Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion square expanded={ expanded === 'panel3' } onChange={ handleChange('panel3') }>
-                        <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-                            <Typography>Moves</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>Pokemon Moves</Typography>
                         </AccordionDetails>
                     </Accordion>
                 </Grid>

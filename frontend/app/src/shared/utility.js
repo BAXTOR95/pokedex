@@ -48,8 +48,3 @@ export const handleCapturePokemon = (pokemonId, capturedPokemons, onRemoveCaptur
         onAddCapturedPokemon(pokemonId);
     }
 };
-
-export const handlePokeballIconClass = (pokemonId, capturedPokemons, classes) => {
-    const captured = (capturedPokemons.find(id => id.pokemonId === pokemonId.toString()));
-    return captured ? classes.iconCaptured : classes.icon;
-};

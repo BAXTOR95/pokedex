@@ -5,7 +5,8 @@ import {
     Grid,
     Typography,
     TextField,
-    Badge
+    Badge,
+    Container
 } from "@material-ui/core";
 import { Icon } from '@iconify/react';
 import pokeballIcon from '@iconify-icons/mdi/pokeball';
@@ -18,7 +19,7 @@ import { useHistory } from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';
 import Skeleton from '@material-ui/lab/Skeleton';
 import * as actions from '../../store/actions/index';
-import { toFirstCharUppercase, handleCapturePokemon, handlePokeballIconClass } from "../../shared/utility";
+import { toFirstCharUppercase, handleCapturePokemon } from "../../shared/utility";
 
 
 const useStyles = makeStyles(theme => ({
@@ -35,8 +36,9 @@ const useStyles = makeStyles(theme => ({
     },
     ownedContainerBar: {
         backgroundColor: 'rgba(26, 53, 88, .3)',
-        alignSelf: "flex-end",
+        color: theme.palette.common.white,
         height: "56px",
+        textAlign: "right",
         '& > *': {
             margin: theme.spacing(2),
         },
@@ -190,14 +192,14 @@ export const PokedexList = (props) => {
                     getPokemonCardSkeleton(3)
                 ) }
             </GridList>
-            <AppBar position="static" className={ classes.ownedContainerBar }>
+            <Container position="static" className={ classes.ownedContainerBar }>
                 {
                     isAuthenticated &&
                     <Badge color="secondary" badgeContent={ totalCapturedPokemons } showZero>
-                        <Typography>Owned</Typography>
+                        <Typography>Pokemons Owned <Icon icon={ pokeballIcon } /></Typography>
                     </Badge>
                 }
-            </AppBar>
+            </Container>
         </div>
     );
 }

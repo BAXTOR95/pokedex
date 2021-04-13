@@ -1,15 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import { withRouter } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 
 import classes from './NavigationItems.module.css';
 import NavigationItem from './NavigationItem/NavigationItem';
 
-const navigationItems = (props) => (
-    <ul className={ classes.NavigationItems }>
-        <NavigationItem link="/" exact>Pokedex</NavigationItem>
-        {!props.isAuthenticated
-            ? <NavigationItem link="/auth">Authenticate</NavigationItem>
-            : <NavigationItem link="/logout">Logout</NavigationItem> }
-    </ul>
-);
+const StyledMenu = withStyles({
+    paper: {
+        border: '1px solid #d3d4d5',
+    },
+})((props) => (
+    <Menu
+        elevation={ 0 }
+        getContentAnchorEl={ null }
+        anchorOrigin={ {
+            vertical: 'bottom',
+            horizontal: 'center',
+        } }
+        transformOrigin={ {
+            vertical: 'top',
+            horizontal: 'center',
+        } }
+        { ...props }
+    />
+));
 
-export default navigationItems;
+const NavigationItems = (props) => {
+    const [ anchorEl, setAnchorEl ] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = (url) => {
+        setAnchorEl(null);
+        url && props.history.push(url);
+    };
+
+    return (
+        <ul className={ classes.NavigationItems }>
+            <NavigationItem link="/" exact>POKEDEX</NavigationItem>
+            <div>
+                <IconButton
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    variant="contained"
+                    onClick={ handleMenu }
+                    color="inherit"
+                >
+                    <AccountCircle />
+                </IconButton>
+                <StyledMenu
+                    id="menu-appbar"
+                    anchorEl={ anchorEl }
+                    keepMounted
+                    open={ open }
+                    onClose={ handleClose }
+                >
+                    { !props.isAuthenticated ?
+                        <MenuItem onClick={ () => handleClose("/auth") }>Login</MenuItem> :
+                        <MenuItem onClick={ () => handleClose("/logout") }>Logout</MenuItem> }
+                </StyledMenu>
+            </div>
+        </ul>
+    );
+};
+
+export default withRouter(NavigationItems);

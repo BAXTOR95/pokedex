@@ -1,27 +1,18 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import MuiCardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
 import Chip from '@material-ui/core/Chip';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import MuiListItemText from '@material-ui/core/ListItemText';
-import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 import Divider from '@material-ui/core/Divider';
-import { Typography, Link, Grid, Paper, ButtonBase } from '@material-ui/core';
+import { Typography, Grid, Paper, ButtonBase } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Icon } from '@iconify/react';
 import pokeballIcon from '@iconify-icons/mdi/pokeball';
@@ -37,11 +28,17 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         maxWidth: 850,
         backgroundColor: 'rgba(26, 53, 88, .3)',
-        color: theme.palette.common.white
+        color: theme.palette.common.white,
+    },
+    mediaRoot: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
     },
     media: {
-        height: 0,
-        paddingTop: '100%',
+        height: "8em",
+        width: "80%",
+        paddingBottom: '56.25%', // 16:9
     },
     expand: {
         transform: 'rotate(0deg)',
@@ -91,6 +88,9 @@ const useStyles = makeStyles(theme => ({
     list: {
         width: '100%',
         maxWidth: '36ch',
+        display: 'flex',
+        flexDirection: 'row',
+        padding: 0,
     }
 }));
 
@@ -140,8 +140,6 @@ export const Pokemon = (props) => {
     const onRemoveCapturedPokemon = useCallback((id) => dispatch(actions.removeCapturedPokemon(token, id)), [ dispatch, token ]);
 
     const classes = useStyles();
-
-    const [ expanded, setExpanded ] = React.useState(false);
 
 
     useEffect(() => {
@@ -198,7 +196,7 @@ export const Pokemon = (props) => {
     }
 
     const generatePokemonJSX = () => {
-        const { name, id, species, height, weight, types, sprites } = pokemonData;
+        const { name, id, species, height, weight, types, sprites, abilities } = pokemonData;
         const fullImageUrl = `https://pokeres.bastionbot.org/images/pokemon/${ id }.png`;
         const { front_default } = sprites;
 
@@ -229,17 +227,19 @@ export const Pokemon = (props) => {
                     title={ toFirstCharUppercase(name) }
                     subheader={ `#: ${ id }` }
                 />
-                <CardMedia
-                    className={ classes.media }
-                    image={ fullImageUrl }
-                    title={ name }
-                />
+                <div className={ classes.mediaRoot }>
+                    <CardMedia
+                        className={ classes.media }
+                        image={ fullImageUrl }
+                        title={ name }
+                    />
+                </div>
                 <CardContent>
                     <div className={ classes.section1 }>
+                        <Typography gutterBottom variant="body1">
+                            Pokemon Info:
+                        </Typography>
                         <List className={ classes.list }>
-                            <Typography gutterBottom variant="body1">
-                                Pokemon Info:
-                            </Typography>
                             <ListItem>
                                 <ListItemText primary="Species" secondary={ species.name } />
                             </ListItem>
@@ -247,7 +247,7 @@ export const Pokemon = (props) => {
                             <ListItem>
                                 <ListItemText primary="Height" secondary={ `${ Math.round(height * 0.1) }m` } />
                             </ListItem>
-                            <Divider component="li" variant="inset" />
+                            <Divider component="li" />
                             <ListItem>
                                 <ListItemText primary="Weight" secondary={ `${ Math.round(weight * .1) }kg` } />
                             </ListItem>
@@ -261,6 +261,20 @@ export const Pokemon = (props) => {
                             { types.map((typesInfo) => {
                                 const { type } = typesInfo;
                                 const { name } = type;
+                                return (
+                                    <Chip className={ classes.chip } label={ `${ name }` } key={ name } />
+                                );
+                            }) }
+                        </div>
+                    </div>
+                    <div className={ classes.section2 }>
+                        <Typography gutterBottom variant="body1">
+                            Abilities:
+                            </Typography>
+                        <div>
+                            { abilities.map((abilitiesInfo) => {
+                                const { ability } = abilitiesInfo;
+                                const { name } = ability;
                                 return (
                                     <Chip className={ classes.chip } label={ `${ name }` } key={ name } />
                                 );
