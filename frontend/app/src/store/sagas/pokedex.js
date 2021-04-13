@@ -9,7 +9,7 @@ import * as actions from '../actions/index';
 export function* pokedexLoadListSaga(action) {
     yield put(actions.pokedexListLoadStart());
     try {
-        const response = yield axiosPoke.get('?limit=21');
+        const response = yield axiosPoke.get('?limit=150');
         const { data } = response;
         const { results } = data;
         const newPokemonData = {};
@@ -27,8 +27,6 @@ export function* pokedexLoadListSaga(action) {
 };
 
 export function* fetchCapturedPokemons(action) {
-    console.log('token', action.token);
-    console.log('userId', action.userId);
     const queryParams = '?auth=' + action.token + '&orderBy="userId"&equalTo="' + action.userId + '"';
     try {
         const response = yield axiosDb.get('https://pokedex-13253-default-rtdb.firebaseio.com/capturedPokemons.json' + queryParams);

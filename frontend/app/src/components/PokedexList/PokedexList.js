@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     AppBar,
     Grid,
-    TextField
+    Typography,
+    TextField,
+    Badge
 } from "@material-ui/core";
 import { Icon } from '@iconify/react';
 import pokeballIcon from '@iconify-icons/mdi/pokeball';
@@ -11,12 +13,12 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';
 import Skeleton from '@material-ui/lab/Skeleton';
 import * as actions from '../../store/actions/index';
-import { toFirstCharUppercase } from "../../shared/utility";
+import { toFirstCharUppercase, handleCapturePokemon, handlePokeballIconClass } from "../../shared/utility";
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,23 +27,26 @@ const useStyles = makeStyles(theme => ({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         overflow: 'hidden',
-        backgroundColor: "rgba(81, 154, 251, 1)"
+        backgroundColor: "rgba(81, 154, 251, 1)",
     },
-    appBar: {
-        backgroundColor: 'rgba(26, 53, 88, .3)'
+    searchContainerBar: {
+        backgroundColor: 'rgba(26, 53, 88, .3)',
+        height: "56px",
+    },
+    ownedContainerBar: {
+        backgroundColor: 'rgba(26, 53, 88, .3)',
+        alignSelf: "flex-end",
+        height: "56px",
+        '& > *': {
+            margin: theme.spacing(2),
+        },
     },
     gridListTitleBar: {
         backgroundColor: 'rgba(26, 53, 88, .3)'
     },
     gridList: {
-        width: "80%",
+        width: "95%",
         height: "80vh",
-    },
-    icon: {
-        color: 'rgba(255, 255, 255, 0.54)',
-    },
-    iconCaptured: {
-        color: 'rgba(255, 0, 47, 1)',
     },
     pokedexContainer: {
         paddingTop: "20px",
@@ -55,16 +60,33 @@ const useStyles = makeStyles(theme => ({
     },
     searchContainer: {
         display: "flex",
+        marginLeft: "5%",
+        width: "100%"
     },
     searchIcon: {
         alignSelf: "flex-end",
-        marginBottom: "5px"
-    },
-    searchInput: {
-        width: "200px",
-        margin: "5px"
+        marginBottom: "5px",
     }
 }));
+
+const StyledTextField = withStyles((theme) => ({
+    root: {
+        width: "200px",
+        margin: "5px",
+        "& .MuiInputBase-root": {
+            color: theme.palette.common.white,
+        }
+    }
+}))(TextField);
+
+const StyledIconButton = withStyles((theme) => ({
+    colorPrimary: {
+        color: 'rgba(255, 0, 47, 1)',
+    },
+    colorSecondary: {
+        color: 'rgba(255, 255, 255, 0.54)',
+    }
+}))(IconButton);
 
 export const PokedexList = (props) => {
     const classes = useStyles();
@@ -96,15 +118,6 @@ export const PokedexList = (props) => {
         setFilter(e.target.value);
     };
 
-    const handleCapturePokemon = (pokemonId) => {
-        const captured = (capturedPokemons.find(id => id.pokemonId === pokemonId));
-        if (captured) {
-            onRemoveCapturedPokemon(captured.id);
-        } else {
-            onAddCapturedPokemon(pokemonId);
-        }
-    };
-
     const getPokemonCard = pokemonId => {
         const { id, name, sprite } = pokemonListData[ pokemonId ];
 
@@ -118,9 +131,19 @@ export const PokedexList = (props) => {
                     actionIcon={
                         (
                             isAuthenticated &&
-                            <IconButton aria-label={ `capture ${ name }` } className={ classes.icon } onClick={ () => handleCapturePokemon(pokemonId) }>
+                            <StyledIconButton
+                                aria-label={ `capture ${ name }` }
+                                color={ capturedPokemons.find((key) =>
+                                    key.pokemonId === pokemonId.toString()
+                                ) ? "primary" : "secondary" }
+                                onClick={ () => handleCapturePokemon(
+                                    pokemonId,
+                                    capturedPokemons,
+                                    onRemoveCapturedPokemon,
+                                    onAddCapturedPokemon
+                                ) }>
                                 <Icon icon={ pokeballIcon } />
-                            </IconButton>
+                            </StyledIconButton>
                         )
                     }
                 />
@@ -143,16 +166,20 @@ export const PokedexList = (props) => {
 
     return (
         <div className={ classes.root }>
-            <AppBar position="static" className={ classes.appBar }>
-                <div className={ classes.searchContainer }>
-                    <SearchIcon className={ classes.searchIcon } />
-                    <TextField
-                        onChange={ handleSearchChange }
-                        className={ classes.searchInput }
-                        label="Pokemon"
-                        variant="standard"
-                    />
-                </div>
+            <AppBar position="static" className={ classes.searchContainerBar }>
+                <Grid container spacing={ 1 } alignItems="flex-end" className={ classes.searchContainer }>
+                    <Grid item>
+                        <SearchIcon className={ classes.searchIcon } />
+                    </Grid>
+                    <Grid item>
+                        <StyledTextField
+                            onChange={ handleSearchChange }
+                            className={ classes.searchInput }
+                            label="Pokemon"
+                            variant="standard"
+                        />
+                    </Grid>
+                </Grid>
             </AppBar>
             <GridList cols={ 3 } className={ classes.gridList }>
                 { pokemonListData && !loading ? (
@@ -163,6 +190,14 @@ export const PokedexList = (props) => {
                     getPokemonCardSkeleton(3)
                 ) }
             </GridList>
+            <AppBar position="static" className={ classes.ownedContainerBar }>
+                {
+                    isAuthenticated &&
+                    <Badge color="secondary" badgeContent={ totalCapturedPokemons } showZero>
+                        <Typography>Owned</Typography>
+                    </Badge>
+                }
+            </AppBar>
         </div>
     );
 }

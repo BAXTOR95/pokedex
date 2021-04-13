@@ -39,3 +39,17 @@ export const checkValidity = (value, rules) => {
 export const toFirstCharUppercase = name => {
     return name.charAt(0).toUpperCase() + name.slice(1);
 }
+
+export const handleCapturePokemon = (pokemonId, capturedPokemons, onRemoveCapturedPokemon, onAddCapturedPokemon) => {
+    const captured = (capturedPokemons.find(id => id.pokemonId === pokemonId.toString()));
+    if (captured) {
+        onRemoveCapturedPokemon(captured.id);
+    } else {
+        onAddCapturedPokemon(pokemonId);
+    }
+};
+
+export const handlePokeballIconClass = (pokemonId, capturedPokemons, classes) => {
+    const captured = (capturedPokemons.find(id => id.pokemonId === pokemonId.toString()));
+    return captured ? classes.iconCaptured : classes.icon;
+};

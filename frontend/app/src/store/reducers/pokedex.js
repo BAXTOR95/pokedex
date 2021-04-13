@@ -36,11 +36,11 @@ const addCapturedPokemonSuccess = (state, action) => {
         totalCapturedPokemons: updatedCapturedPokemons.length
     };
     return updateObject(state, updatedState);
-}
+};
 
 const addCapturedPokemonFailed = (state, action) => {
     return updateObject(state, { error: action.error });
-}
+};
 
 const removeCapturedPokemonSuccess = (state, action) => {
     const updatedCapturedPokemons = [ ...state.capturedPokemons ].filter(pokemon => {
@@ -51,11 +51,11 @@ const removeCapturedPokemonSuccess = (state, action) => {
         totalCapturedPokemons: updatedCapturedPokemons.length
     };
     return updateObject(state, updatedState);
-}
+};
 
 const removeCapturedPokemonFailed = (state, action) => {
     return updateObject(state, { error: action.error });
-}
+};
 
 const fetchCapturedPokemonsSuccess = (state, action) => {
     return updateObject(state, {
@@ -81,6 +81,6 @@ const reducer = (state = initialState, action) => {
         case actionTypes.FETCH_CAPTURED_POKEMONS_FAILED: return fetchCapturedPokemonsFailed(state, action);
         default: return state;
     }
-}
+};
 
 export default reducer;

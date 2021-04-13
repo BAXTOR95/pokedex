@@ -1,17 +1,61 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import Card from '@material-ui/core/Card';
+import MuiCardHeader from '@material-ui/core/CardHeader';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import Collapse from '@material-ui/core/Collapse';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
+import Chip from '@material-ui/core/Chip';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import MuiListItemText from '@material-ui/core/ListItemText';
+import BeachAccessIcon from '@material-ui/icons/BeachAccess';
+import Divider from '@material-ui/core/Divider';
 import { Typography, Link, Grid, Paper, ButtonBase } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
+import { Icon } from '@iconify/react';
+import pokeballIcon from '@iconify-icons/mdi/pokeball';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../store/actions/index';
-import { toFirstCharUppercase } from '../../shared/utility';
 import axios from '../../axios-poke-api';
 import pokemonNotFound from '../../assets/images/pokemon_not_found.png';
+import { toFirstCharUppercase, handleCapturePokemon } from "../../shared/utility";
 
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
+        width: '100%',
+        maxWidth: 850,
+        backgroundColor: 'rgba(26, 53, 88, .3)',
+        color: theme.palette.common.white
+    },
+    media: {
+        height: 0,
+        paddingTop: '100%',
+    },
+    expand: {
+        transform: 'rotate(0deg)',
+        marginLeft: 'auto',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    },
+    expandOpen: {
+        transform: 'rotate(180deg)',
+    },
+    avatar: {
+        width: theme.spacing(7),
+        height: theme.spacing(7),
     },
     paper: {
         padding: theme.spacing(2),
@@ -23,13 +67,56 @@ const useStyles = makeStyles(theme => ({
         width: 180,
         height: 180,
     },
+    icon: {
+        color: 'rgba(255, 255, 255, 0.54)',
+    },
     img: {
         margin: 'auto',
         display: 'block',
         maxWidth: '100%',
         maxHeight: '100%',
     },
+    chip: {
+        margin: theme.spacing(0.5),
+    },
+    section1: {
+        margin: theme.spacing(3, 2),
+    },
+    section2: {
+        margin: theme.spacing(2),
+    },
+    section3: {
+        margin: theme.spacing(3, 1, 1),
+    },
+    list: {
+        width: '100%',
+        maxWidth: '36ch',
+    }
 }));
+
+const CardHeader = withStyles((theme) => ({
+    title: {
+        fontSize: "2em"
+    },
+    subheader: {
+        color: theme.palette.common.white
+    }
+}))(MuiCardHeader);
+
+const ListItemText = withStyles((theme) => ({
+    secondary: {
+        color: theme.palette.grey[ 300 ]
+    }
+}))(MuiListItemText);
+
+const StyledIconButton = withStyles((theme) => ({
+    colorPrimary: {
+        color: 'rgba(255, 0, 47, 1)',
+    },
+    colorSecondary: {
+        color: 'rgba(255, 255, 255, 0.54)',
+    }
+}))(IconButton);
 
 
 export const Pokemon = (props) => {
@@ -42,10 +129,20 @@ export const Pokemon = (props) => {
     const pokemonData = useSelector(state => state.pokemon.pokemonData);
     const loading = useSelector(state => state.pokemon.loading);
     const error = useSelector(state => state.pokemon.error);
+    const token = useSelector(state => state.auth.token);
+    const userId = useSelector(state => state.auth.userId);
+    const capturedPokemons = useSelector(state => state.pokedex.capturedPokemons);
+
+    const isAuthenticated = token !== null;
 
     const onPokedexPokemonLoad = useCallback(() => dispatch(actions.pokedexPokemonLoad(pokemonId)), [ dispatch, pokemonId ]);
+    const onAddCapturedPokemon = useCallback((pokemonId) => dispatch(actions.addCapturedPokemon(token, pokemonId, userId)), [ dispatch, token, userId ]);
+    const onRemoveCapturedPokemon = useCallback((id) => dispatch(actions.removeCapturedPokemon(token, id)), [ dispatch, token ]);
 
     const classes = useStyles();
+
+    const [ expanded, setExpanded ] = React.useState(false);
+
 
     useEffect(() => {
         onPokedexPokemonLoad();
@@ -106,66 +203,72 @@ export const Pokemon = (props) => {
         const { front_default } = sprites;
 
         return (
-            <div className={ classes.root }>
-                <Paper className={ classes.paper }>
-                    <Grid container spacing={ 2 }>
-                        <Grid item>
-                            <ButtonBase className={ classes.image }>
-                                <img className={ classes.img } src={ fullImageUrl } alt="full_pokemon_image" />
-                            </ButtonBase>
-                        </Grid>
-                        <Grid item xs={ 12 } sm container>
-                            <Grid item xs container direction="column" spacing={ 2 }>
-                                <Grid item xs>
-                                    <Typography gutterBottom variant="h3">
-                                        { `${ id }.` } { toFirstCharUppercase(name) }
-                                    </Typography>
-                                    <Typography variant="h6" gutterBottom>
-                                        Pokemon Info
-                                        </Typography>
-                                    <Typography component={ 'div' } variant="body2">
-                                        Species:
-                                            <Typography>
-                                            <Link href={ species.url }>{ species.name }</Link>
-                                        </Typography>
-                                    </Typography>
-                                    <Typography component={ 'div' } variant="body2">
-                                        Height:
-                                            <Typography color="textSecondary">
-                                            { `${ height * 10 } cm` }
-                                        </Typography>
-                                    </Typography>
-                                    <Typography component={ 'div' } variant="body2">
-                                        Weight:
-                                            <Typography color="textSecondary">
-                                            { `${ weight * .1 } kg` }
-                                        </Typography>
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="h6" gutterBottom>
-                                        Types:
-                                        </Typography>
-                                    { types.map((typesInfo) => {
-                                        const { type } = typesInfo;
-                                        const { name } = type;
-                                        return (
-                                            <Typography key={ name } color="textSecondary">
-                                                { `${ name }` }
-                                            </Typography>
-                                        );
-                                    }) }
-                                </Grid>
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="subtitle1">
-                                    <img alt="pokemon_sprite" src={ front_default } />
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </div>
+            <Card className={ classes.root }>
+                <CardHeader
+                    avatar={
+                        <Avatar alt="pokemon_sprite" src={ front_default } className={ classes.avatar } />
+                    }
+                    action={
+                        (
+                            isAuthenticated &&
+                            <StyledIconButton
+                                aria-label={ `capture ${ name }` }
+                                color={ capturedPokemons.find((key) =>
+                                    key.pokemonId === id.toString()
+                                ) ? "primary" : "secondary" }
+                                onClick={ () => handleCapturePokemon(
+                                    pokemonId,
+                                    capturedPokemons,
+                                    onRemoveCapturedPokemon,
+                                    onAddCapturedPokemon
+                                ) }>
+                                <Icon icon={ pokeballIcon } />
+                            </StyledIconButton>
+                        )
+                    }
+                    title={ toFirstCharUppercase(name) }
+                    subheader={ `#: ${ id }` }
+                />
+                <CardMedia
+                    className={ classes.media }
+                    image={ fullImageUrl }
+                    title={ name }
+                />
+                <CardContent>
+                    <div className={ classes.section1 }>
+                        <List className={ classes.list }>
+                            <Typography gutterBottom variant="body1">
+                                Pokemon Info:
+                            </Typography>
+                            <ListItem>
+                                <ListItemText primary="Species" secondary={ species.name } />
+                            </ListItem>
+                            <Divider component="li" />
+                            <ListItem>
+                                <ListItemText primary="Height" secondary={ `${ Math.round(height * 0.1) }m` } />
+                            </ListItem>
+                            <Divider component="li" variant="inset" />
+                            <ListItem>
+                                <ListItemText primary="Weight" secondary={ `${ Math.round(weight * .1) }kg` } />
+                            </ListItem>
+                        </List>
+                    </div>
+                    <div className={ classes.section2 }>
+                        <Typography gutterBottom variant="body1">
+                            Types:
+                            </Typography>
+                        <div>
+                            { types.map((typesInfo) => {
+                                const { type } = typesInfo;
+                                const { name } = type;
+                                return (
+                                    <Chip className={ classes.chip } label={ `${ name }` } key={ name } />
+                                );
+                            }) }
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
         )
     }
 

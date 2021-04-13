@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
+import MuiTypography from '@material-ui/core/Typography';
 import './Pokedex.css';
 import PokedexList from '../../components/PokedexList/PokedexList';
 import Pokemon from '../../components/Pokemon/Pokemon';
@@ -53,9 +53,16 @@ const AccordionDetails = withStyles((theme) => ({
     },
 }))(MuiAccordionDetails);
 
+const Typography = withStyles((theme) => ({
+    root: {
+        color: theme.palette.common.white
+    }
+}))(MuiTypography);
+
 export const Pokedex = props => {
     const pokemonData = useSelector(state => state.pokemon.pokemonData);
     const loadingPokemon = useSelector(state => state.pokemon.loading);
+    const errorPokemon = useSelector(state => state.pokemon.error);
     const [ expanded, setExpanded ] = React.useState('panel1');
 
     const handleChange = (panel) => (event, newExpanded) => {
@@ -69,7 +76,7 @@ export const Pokedex = props => {
                     <PokedexList />
                 </Grid>
                 <Grid item xs>
-                    <Accordion square expanded={ true } onChange={ handleChange('panel1') }>
+                    <Accordion square expanded={ expanded === 'panel1' } onChange={ handleChange('panel1') }>
                         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                             <Typography>Pokemon</Typography>
                         </AccordionSummary>
@@ -77,7 +84,7 @@ export const Pokedex = props => {
                             <Route
                                 path={ '/:pokemonId' }
                                 component={ Pokemon } />
-                            {!pokemonData && !loadingPokemon && <Typography>Select a Pokemon to see its details</Typography>}
+                            { !pokemonData && !loadingPokemon && !errorPokemon && <Typography>Select a Pokemon to see its details</Typography> }
                         </AccordionDetails>
                     </Accordion>
                     <Accordion square expanded={ expanded === 'panel2' } onChange={ handleChange('panel2') }>
