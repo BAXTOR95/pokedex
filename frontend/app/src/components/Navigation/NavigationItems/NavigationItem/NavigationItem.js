@@ -4,15 +4,18 @@ import { ButtonBase } from '@material-ui/core';
 
 import classes from './NavigationItem.module.css';
 
-const navigationItem = (props) => (
-    <ButtonBase>
-        <li className={ classes.NavigationItem }>
-            <NavLink
-                to={ props.link }
-                exact={ props.exact }
-                activeClassName={ classes.active }>{ props.children }</NavLink>
-        </li>
-    </ButtonBase>
-);
+const NavigationItem = (props) => {
 
-export default navigationItem;
+    return (
+        <ButtonBase>
+            <li className={ classes.NavigationItem }>
+                <NavLink
+                    to={ props.link }
+                    exact={ props.exact }
+                    activeClassName={ classes.active }>{ props.children }</NavLink>
+            </li>
+        </ButtonBase>
+    );
+};
+
+export default NavigationItem;

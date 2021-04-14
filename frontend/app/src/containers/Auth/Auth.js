@@ -10,9 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-import Spinner from '../../components/UI/Spinner/Spinner';
-// import Button from '../../components/UI/Button/Button';
 import * as actions from '../../store/actions/index';
 import { updateObject, checkValidity } from '../../shared/utility';
 import backgroundPokedex from '../../assets/images/pokeball_wallpaper.jpg';
@@ -137,7 +136,7 @@ const Auth = props => {
     ));
 
     if (props.loading) {
-        form = <Spinner />
+        form = <CircularProgress />
     }
 
     let errorMessage = null;

@@ -8,6 +8,7 @@ from core import models
 
 
 class UserAdmin(BaseUserAdmin):
+    model = models.User
     ordering = ['id']
     list_display = ['email', 'localId']
     fieldsets = (

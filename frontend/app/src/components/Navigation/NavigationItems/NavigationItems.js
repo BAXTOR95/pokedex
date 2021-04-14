@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { withRouter } from 'react-router-dom';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 
-import classes from './NavigationItems.module.css';
 import NavigationItem from './NavigationItem/NavigationItem';
 
 const StyledMenu = withStyles({
@@ -27,9 +26,27 @@ const StyledMenu = withStyles({
     />
 ));
 
+const useStyles = makeStyles(theme => ({
+    NavigationItems: {
+        margin: 0,
+        padding: 0,
+        listStyle: "none",
+        display: "flex",
+        flexFlow: "column",
+        alignItems: "right",
+        height: "100%"
+    },
+    "@media (min-width: 500px)": {
+        NavigationItems: {
+            flexFlow: "row"
+        }
+    }
+}));
+
 const NavigationItems = (props) => {
     const [ anchorEl, setAnchorEl ] = useState(null);
     const open = Boolean(anchorEl);
+    const classes = useStyles();
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);

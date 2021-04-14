@@ -28,9 +28,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
             instance.auth_token.created - yesterday).total_seconds()
         instance.save()
 
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def generateLocalId(**kwargs):
+def generateLocalId():
     """Generate file path for new recipe image"""
     return f'{uuid.uuid4()}'
 

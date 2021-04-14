@@ -7,7 +7,6 @@ import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import MuiTypography from '@material-ui/core/Typography';
-import './Pokedex.css';
 import PokedexList from '../../components/PokedexList/PokedexList';
 import Pokemon from '../../components/Pokemon/Pokemon';
 

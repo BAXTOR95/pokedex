@@ -1,5 +1,5 @@
 import { put, delay, call } from 'redux-saga/effects';
-import axios from 'axios';
+import axios from '../../axios-db';
 
 import * as actions from '../actions/index';
 
@@ -20,12 +20,14 @@ export function* authUserSaga(action) {
     const authData = {
         email: action.email,
         password: action.password,
-        returnSecureToken: true
+        // returnSecureToken: true
     };
-    let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + process.env.REACT_APP_API_KEY;
-    if (!action.isSignup) {
-        url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + process.env.REACT_APP_API_KEY;
-    }
+    // let url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + process.env.REACT_APP_API_KEY;
+    // if (!action.isSignup) {
+    //     url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + process.env.REACT_APP_API_KEY;
+    // }
+
+    let url = '/api/user/' + (action.isSignup ? 'create/' : 'token/');
 
     try {
         const response = yield axios.post(url, authData);

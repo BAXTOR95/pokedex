@@ -36,10 +36,9 @@ export const addCapturedPokemon = (token, pokemonId, userId) => {
     }
 }
 
-export const addCapturedPokemonSuccess = (id, pokemonCaptured) => {
+export const addCapturedPokemonSuccess = (pokemonCaptured) => {
     return {
         type: actionTypes.ADD_CAPTURED_POKEMON_SUCCESS,
-        id: id,
         pokemonCaptured: pokemonCaptured
     }
 }

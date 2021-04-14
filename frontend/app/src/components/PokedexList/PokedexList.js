@@ -6,14 +6,14 @@ import {
     Typography,
     TextField,
     Badge,
-    Container
+    Container,
+    GridList,
+    GridListTile,
+    GridListTileBar,
+    IconButton
 } from "@material-ui/core";
 import { Icon } from '@iconify/react';
 import pokeballIcon from '@iconify-icons/mdi/pokeball';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
-import IconButton from '@material-ui/core/IconButton';
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';

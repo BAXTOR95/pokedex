@@ -29,8 +29,7 @@ const pokedexListLoadFail = (state, action) => {
 };
 
 const addCapturedPokemonSuccess = (state, action) => {
-    const newCapturedPokemon = updateObject(action.pokemonCaptured, { id: action.id });
-    const updatedCapturedPokemons = state.capturedPokemons.concat(newCapturedPokemon);
+    const updatedCapturedPokemons = state.capturedPokemons.concat(action.pokemonCaptured);
     const updatedState = {
         capturedPokemons: updatedCapturedPokemons,
         totalCapturedPokemons: updatedCapturedPokemons.length
