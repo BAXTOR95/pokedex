@@ -7,12 +7,9 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 from core import models
 
 
-class CustomUserAdmin(BaseUserAdmin):
-    add_form = CustomUserCreationForm
-    form = CustomUserChangeForm
-    model = models.User
-    list_display = ('email', 'is_staff', 'is_active',)
-    list_filter = ('email', 'is_staff', 'is_active',)
+class UserAdmin(BaseUserAdmin):
+    ordering = ['id']
+    list_display = ['email', 'localId']
     fieldsets = (
         (None, {
             'fields': (
@@ -22,13 +19,14 @@ class CustomUserAdmin(BaseUserAdmin):
         }),
         (_('Personal Info'), {
             'fields': (
-                'name',
+                'localId',
             ),
         }),
         (_('Permissions'), {
             'fields': (
                 'is_active',
-                'is_staff'
+                'is_staff',
+                'is_superuser'
             ),
         }),
         (_('Important dates'), {
@@ -40,11 +38,9 @@ class CustomUserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active')
+            'fields': ('email', 'password1', 'password2')
         }),
     )
-    search_fields = ('email',)
-    ordering = ('email',)
 
 
 class ListAdminMixin(object):
@@ -53,7 +49,7 @@ class ListAdminMixin(object):
         super(ListAdminMixin, self).__init__(model, admin_site)
 
 
-admin.site.register(models.User, CustomUserAdmin)
+admin.site.register(models.User, UserAdmin)
 
 app_models = apps.get_models()
 

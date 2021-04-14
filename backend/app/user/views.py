@@ -28,14 +28,14 @@ class CreateUserView(generics.CreateAPIView):
             user = serializer.create(
                 validated_data=serializer.validated_data)
 
-            return Response({'token': user.auth_token.key,
+            return Response({'idToken': user.auth_token.key,
                              'created': user.auth_token.created,
                              'expiresIn': user.expiresIn,
                              'email': user.email,
+                             'localId': user.localId,
                              'is_active': user.is_active,
                              'is_superuser': user.is_superuser})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class CreateTokenView(ObtainAuthToken):
     """Create a new auth token for user"""
@@ -69,14 +69,14 @@ class CreateExpiringTokenView(ObtainAuthToken):
                 #     tzinfo=timezone.utc)
                 token.save()
 
-            return Response({'token': token.key,
+            return Response({'idToken': token.key,
                              'created': token.created,
                              'expiresIn': token.created - yesterday,
                              'email': user.email,
+                             'localId': user.localId,
                              'is_active': user.is_active,
                              'is_superuser': user.is_superuser})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ManageUserView(generics.RetrieveUpdateAPIView):
     """Manage the authenticated user"""

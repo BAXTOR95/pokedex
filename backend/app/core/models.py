@@ -1,3 +1,4 @@
+import uuid
 import datetime
 from datetime import date
 
@@ -16,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 24)
 
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
@@ -27,51 +29,64 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         instance.save()
 
 
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def generateLocalId(**kwargs):
+    """Generate file path for new recipe image"""
+    return f'{uuid.uuid4()}'
+
+
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """Creates and saves a new user"""
         if not email:
-            raise ValueError(_('The Email must be set'))
+            raise ValueError(_('Users must have an email address'))
 
-        email = self.normalize_email(email)
+        localId = generateLocalId()
         user = self.model(
-            email=email,
-            **extra_fields
-        )
+            email=self.normalize_email(email),
+            localId=localId,
+            **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
 
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
+    def create_superuser(self, email, password, **extra_fields):
         """Creates and saves a new super user"""
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        user = self.create_user(email, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError(_('Superuser must have is_staff=True.'))
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError(_('Superuser must have is_superuser=True.'))
-
-        return self.create_user(email, password, **extra_fields)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model that supports using email instead of username"""
 
-    email = models.EmailField(_('email address'), unique=True)
-    name = models.CharField(max_length=255)
+    email = models.EmailField(_('email address'), max_length=255, unique=True)
+    localId = models.CharField(max_length=255, default='')
     date_joined = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     expiresIn = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-    USERNAME_FIELD = 'email'
-
     objects = UserManager()
 
-    def __str__(self):
-        return self.soeid
+    USERNAME_FIELD = 'email'
 
+    def __str__(self):
+        return self.localId
+
+class PokemonCaptured(models.Model):
+    """PokemonCaptured object"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    pokemonId = models.CharField(max_length=255)
+    userId = models.CharField(max_length=255)
+
+    def _str__(self):
+        return self.pokemonId
