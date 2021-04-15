@@ -48,3 +48,14 @@ export const handleCapturePokemon = (pokemonId, capturedPokemons, onRemoveCaptur
         onAddCapturedPokemon(pokemonId);
     }
 };
+
+export const getSnackbarData = (message, variant) => {
+    return {
+        message: message,
+        options: {
+            key: new Date().getTime() + Math.random(),
+            variant: variant,
+            action: null,
+        },
+    };
+};

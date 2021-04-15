@@ -1,24 +1,28 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
+import {
+    Card,
+    CardMedia,
+    CardContent,
+    Avatar,
+    IconButton,
+    Chip,
+    List,
+    ListItem,
+    Divider,
+    Typography,
+    Grid,
+    Paper,
+    ButtonBase
+} from "@material-ui/core";
 import MuiCardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Chip from '@material-ui/core/Chip';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import MuiListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
-import { Typography, Grid, Paper, ButtonBase } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Icon } from '@iconify/react';
 import pokeballIcon from '@iconify-icons/mdi/pokeball';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+
 import * as actions from '../../store/actions/index';
-import axios from '../../axios-poke-api';
 import pokemonNotFound from '../../assets/images/pokemon_not_found.png';
 import { toFirstCharUppercase, handleCapturePokemon } from "../../shared/utility";
 
@@ -39,16 +43,6 @@ const useStyles = makeStyles(theme => ({
         height: "8em",
         width: "80%",
         paddingBottom: '56.25%', // 16:9
-    },
-    expand: {
-        transform: 'rotate(0deg)',
-        marginLeft: 'auto',
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-        }),
-    },
-    expandOpen: {
-        transform: 'rotate(180deg)',
     },
     avatar: {
         width: theme.spacing(7),
@@ -81,9 +75,6 @@ const useStyles = makeStyles(theme => ({
     },
     section2: {
         margin: theme.spacing(2),
-    },
-    section3: {
-        margin: theme.spacing(3, 1, 1),
     },
     list: {
         width: '100%',
@@ -119,7 +110,7 @@ const StyledIconButton = withStyles((theme) => ({
 }))(IconButton);
 
 
-export const Pokemon = (props) => {
+const Pokemon = (props) => {
     const { match } = props;
     const { params } = match;
     const { pokemonId } = params;
@@ -295,4 +286,4 @@ export const Pokemon = (props) => {
     );
 }
 
-export default withErrorHandler(Pokemon, axios);
+export default Pokemon;

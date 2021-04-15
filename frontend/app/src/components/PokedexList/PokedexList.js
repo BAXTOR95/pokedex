@@ -10,7 +10,10 @@ import {
     GridList,
     GridListTile,
     GridListTileBar,
-    IconButton
+    IconButton,
+    FormGroup,
+    FormControlLabel,
+    Switch
 } from "@material-ui/core";
 import { Icon } from '@iconify/react';
 import pokeballIcon from '@iconify-icons/mdi/pokeball';
@@ -20,7 +23,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import Skeleton from '@material-ui/lab/Skeleton';
 import * as actions from '../../store/actions/index';
 import { toFirstCharUppercase, handleCapturePokemon } from "../../shared/utility";
-
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -48,17 +50,7 @@ const useStyles = makeStyles(theme => ({
     },
     gridList: {
         width: "95%",
-        height: "80vh",
-    },
-    pokedexContainer: {
-        paddingTop: "20px",
-        paddingLeft: "25px",
-        paddingRight: "25px",
-        maxHeight: "85vh",
-        overflow: "auto",
-    },
-    listSubheader: {
-        backgroundColor: 'rgba(26, 53, 88, .3)'
+        height: "75vh",
     },
     searchContainer: {
         display: "flex",
@@ -90,9 +82,12 @@ const StyledIconButton = withStyles((theme) => ({
     }
 }))(IconButton);
 
-export const PokedexList = (props) => {
+const PokedexList = (props) => {
     const classes = useStyles();
     const [ filter, setFilter ] = useState("");
+    const [ hideCaptured, setHideCaptured ] = useState({
+        checked: false,
+    });
     const history = useHistory();
 
     const dispatch = useDispatch();
@@ -110,6 +105,8 @@ export const PokedexList = (props) => {
     const onRemoveCapturedPokemon = useCallback((id) => dispatch(actions.removeCapturedPokemon(token, id)), [ dispatch, token ]);
     const onPokedexListLoad = useCallback(() => dispatch(actions.pokedexListLoad()), [ dispatch ]);
     const onFetchCapturedPokemons = useCallback(() => dispatch(actions.fetchCapturedPokemons(token, userId)), [ dispatch, token, userId ]);
+
+    console.log('hideCaptured', hideCaptured.checked);
 
     useEffect(() => {
         onPokedexListLoad();
@@ -166,8 +163,36 @@ export const PokedexList = (props) => {
         return cards;
     }
 
+    const handleChange = (event) => {
+        setHideCaptured({ ...hideCaptured, [ event.target.name ]: event.target.checked });
+    };
+
     return (
         <div className={ classes.root }>
+            <Container position="static" className={ classes.ownedContainerBar }>
+                {
+                    isAuthenticated &&
+                    <FormGroup row>
+                        <FormControlLabel
+                            control={ <Switch checked={ hideCaptured.checked } onChange={ handleChange } name="checked" /> }
+                            label="Hide Captured"
+                        />
+                    </FormGroup>
+                }
+            </Container>
+            <GridList cols={ 3 } className={ classes.gridList }>
+                { pokemonListData && !loading ? (
+                    Object.keys(pokemonListData).map(pokemonId =>
+                        ((pokemonListData[ pokemonId ].name.includes(filter.toLowerCase()) && !hideCaptured.checked) ||
+                            (hideCaptured.checked &&
+                                !Boolean(capturedPokemons.find(id => id.pokemonId === pokemonId.toString())) &&
+                                pokemonListData[ pokemonId ].name.includes(filter.toLowerCase()))) &&
+                        getPokemonCard(pokemonId)
+                    )
+                ) : (
+                    getPokemonCardSkeleton(3)
+                ) }
+            </GridList>
             <AppBar position="static" className={ classes.searchContainerBar }>
                 <Grid container spacing={ 1 } alignItems="flex-end" className={ classes.searchContainer }>
                     <Grid item>
@@ -183,15 +208,6 @@ export const PokedexList = (props) => {
                     </Grid>
                 </Grid>
             </AppBar>
-            <GridList cols={ 3 } className={ classes.gridList }>
-                { pokemonListData && !loading ? (
-                    Object.keys(pokemonListData).map(pokemonId =>
-                        pokemonListData[ pokemonId ].name.includes(filter) &&
-                        getPokemonCard(pokemonId))
-                ) : (
-                    getPokemonCardSkeleton(3)
-                ) }
-            </GridList>
             <Container position="static" className={ classes.ownedContainerBar }>
                 {
                     isAuthenticated &&

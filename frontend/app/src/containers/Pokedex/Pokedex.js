@@ -9,6 +9,7 @@ import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import MuiTypography from '@material-ui/core/Typography';
 import PokedexList from '../../components/PokedexList/PokedexList';
 import Pokemon from '../../components/Pokemon/Pokemon';
+import Notifier from '../../components/Notifier/Notifier';
 
 const Accordion = withStyles({
     root: {
@@ -70,6 +71,7 @@ export const Pokedex = props => {
 
     return (
         <React.Fragment>
+            <Notifier />
             <Grid container spacing={ 2 }>
                 <Grid item xs>
                     <PokedexList />

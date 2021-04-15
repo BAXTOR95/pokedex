@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
         listStyle: "none",
         display: "flex",
         flexFlow: "column",
-        alignItems: "right",
+        alignItems: "center",
         height: "100%"
     },
     "@media (min-width: 500px)": {

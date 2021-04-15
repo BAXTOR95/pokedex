@@ -15,6 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import * as actions from '../../store/actions/index';
 import { updateObject, checkValidity } from '../../shared/utility';
 import backgroundPokedex from '../../assets/images/pokeball_wallpaper.jpg';
+import Notifier from '../../components/Notifier/Notifier';
 
 const useStyles = makeStyles((theme) => ({
     rootLogin: {
@@ -54,7 +55,6 @@ const Auth = props => {
 
     const [ controls, setControls ] = useState({
         email: {
-            elementType: 'input',
             elementConfig: {
                 type: 'email',
                 placeholder: 'Mail Address'
@@ -68,7 +68,6 @@ const Auth = props => {
             touched: false
         },
         password: {
-            elementType: 'input',
             elementConfig: {
                 type: 'password',
                 placeholder: 'Password'
@@ -139,13 +138,6 @@ const Auth = props => {
         form = <CircularProgress />
     }
 
-    let errorMessage = null;
-
-    if (props.error) {
-        errorMessage = (
-            <p>{ props.error.message }</p>
-        )
-    }
 
     let authRedirect = null;
     if (props.isAuthenticated) {
@@ -153,40 +145,42 @@ const Auth = props => {
     }
 
     return (
-        <Grid container component="main" className={ classes.rootLogin }>
-            <Grid item xs={ false } sm={ 4 } md={ 7 } className={ classes.image } />
-            <Grid item xs={ 12 } sm={ 8 } md={ 5 } component={ Paper } elevation={ 6 } square>
-                <div className={ classes.paper }>
-                    <Avatar className={ classes.avatar }>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        { isSignup ? 'Sign Up' : 'Sign In' }
-                    </Typography>
-                    { authRedirect }
-                    { errorMessage }
-                    <form className={ classes.form } onSubmit={ submitHandler }>
-                        { form }
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={ classes.submit }
-                        >
+        <React.Fragment>
+            <Notifier />
+            <Grid container component="main" className={ classes.rootLogin }>
+                <Grid item xs={ false } sm={ 4 } md={ 7 } className={ classes.image } />
+                <Grid item xs={ 12 } sm={ 8 } md={ 5 } component={ Paper } elevation={ 6 } square>
+                    <div className={ classes.paper }>
+                        <Avatar className={ classes.avatar }>
+                            <LockOutlinedIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
                             { isSignup ? 'Sign Up' : 'Sign In' }
-                        </Button>
-                        <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2" onClick={ switchAuthModeHandler }>
-                                    { isSignup ? "Already have an account? Sign In" : "Don't have an account? Sign Up" }
-                                </Link>
+                        </Typography>
+                        { authRedirect }
+                        <form className={ classes.form } onSubmit={ submitHandler }>
+                            { form }
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={ classes.submit }
+                            >
+                                { isSignup ? 'Sign Up' : 'Sign In' }
+                            </Button>
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2" onClick={ switchAuthModeHandler }>
+                                        { isSignup ? "Already have an account? Sign In" : "Don't have an account? Sign Up" }
+                                    </Link>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                </Grid>
             </Grid>
-        </Grid>
+        </React.Fragment>
     );
 }
 

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from "react-redux";
 import { applyMiddleware, createStore, compose, combineReducers } from "redux";
 import createSagaMiddleware from 'redux-saga';
+import { SnackbarProvider } from 'notistack';
 
 import './index.css';
 import App from './App';
@@ -11,6 +12,7 @@ import reportWebVitals from './reportWebVitals';
 import authReducer from './store/reducers/auth';
 import pokedexReducer from './store/reducers/pokedex';
 import pokemonReducer from './store/reducers/pokemon';
+import snackbarReducer from './store/reducers/snackbar';
 import { watchAuth, watchPokedex, watchPokemon } from './store/sagas';
 
 const composeEnhancers = (process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null) || compose;
@@ -18,7 +20,8 @@ const composeEnhancers = (process.env.NODE_ENV === 'development' ? window.__REDU
 const rootReducer = combineReducers({
     auth: authReducer,
     pokedex: pokedexReducer,
-    pokemon: pokemonReducer
+    pokemon: pokemonReducer,
+    snackbar: snackbarReducer
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -33,11 +36,13 @@ sagaMiddleware.run(watchPokemon);
 
 ReactDOM.render(
     <Provider store={ store }>
-        <BrowserRouter>
-            <React.StrictMode>
-                <App className="App" />
-            </React.StrictMode>
-        </BrowserRouter>
+        <SnackbarProvider maxSnack={ 3 }>
+            <BrowserRouter>
+                <React.StrictMode>
+                    <App className="App" />
+                </React.StrictMode>
+            </BrowserRouter>
+        </SnackbarProvider>
     </Provider>,
     document.getElementById('root')
 );
