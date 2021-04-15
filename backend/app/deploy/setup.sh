@@ -29,15 +29,15 @@ $PROJECT_BASE_PATH/backend/env/bin/python manage.py migrate
 $PROJECT_BASE_PATH/backend/env/bin/python manage.py collectstatic --noinput
 
 # Configure supervisor
-cp $PROJECT_BASE_PATH/backend/app/deploy/supervisor_profiles_api.conf /etc/supervisor/conf.d/profiles_api.conf
+cp $PROJECT_BASE_PATH/backend/app/deploy/supervisor_pokedex_api.conf /etc/supervisor/conf.d/pokedex_api.conf
 supervisorctl reread
 supervisorctl update
-supervisorctl restart profiles_api
+supervisorctl restart pokedex_api
 
 # Configure nginx
-cp $PROJECT_BASE_PATH/backend/app/deploy/nginx_profiles_api.conf /etc/nginx/sites-available/profiles_api.conf
+cp $PROJECT_BASE_PATH/backend/app/deploy/nginx_pokedex_api.conf /etc/nginx/sites-available/pokedex_api.conf
 rm /etc/nginx/sites-enabled/default
-ln -s /etc/nginx/sites-available/profiles_api.conf /etc/nginx/sites-enabled/profiles_api.conf
+ln -s /etc/nginx/sites-available/pokedex_api.conf /etc/nginx/sites-enabled/pokedex_api.conf
 systemctl restart nginx.service
 
 echo "DONE! :)"
