@@ -1,5 +1,4 @@
 import datetime
-import json
 
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken

@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext as _
 from django.apps import apps
 
-from .forms import CustomUserCreationForm, CustomUserChangeForm
 from core import models
 
 
