@@ -59,3 +59,6 @@ export const getSnackbarData = (message, variant) => {
         },
     };
 };
+
+export const round = (number, decimalPlaces) =>
+    Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)

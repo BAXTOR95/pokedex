@@ -1,6 +1,7 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import {
     Card,
     CardMedia,
@@ -14,17 +15,20 @@ import {
     Typography,
     Grid,
     Paper,
-    ButtonBase
+    ButtonBase,
+    Collapse,
+    CardActions
 } from "@material-ui/core";
 import MuiCardHeader from '@material-ui/core/CardHeader';
 import MuiListItemText from '@material-ui/core/ListItemText';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Icon } from '@iconify/react';
 import pokeballIcon from '@iconify-icons/mdi/pokeball';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import * as actions from '../../store/actions/index';
 import pokemonNotFound from '../../assets/images/pokemon_not_found.png';
-import { toFirstCharUppercase, handleCapturePokemon } from "../../shared/utility";
+import { toFirstCharUppercase, handleCapturePokemon, round } from "../../shared/utility";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -82,7 +86,17 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'row',
         padding: 0,
-    }
+    },
+    expand: {
+        transform: 'rotate(0deg)',
+        marginLeft: 'auto',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    },
+    expandOpen: {
+        transform: 'rotate(180deg)',
+    },
 }));
 
 const CardHeader = withStyles((theme) => ({
@@ -114,6 +128,7 @@ const Pokemon = (props) => {
     const { match } = props;
     const { params } = match;
     const { pokemonId } = params;
+    const [ movesExpanded, setMovesExpanded ] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -184,10 +199,41 @@ const Pokemon = (props) => {
                 </Paper>
             </div>
         );
+    };
+
+    const handleExpandClick = () => {
+        setMovesExpanded(!movesExpanded);
+    };
+
+    const getColorByMoveType = (type) => {
+        switch (type) {
+            case "normal": return "#A8A878";
+            case "fighting": return "#C03028";
+            case "flying": return "#A890F0";
+            case "poison": return "#A040A0";
+            case "ground": return "#E0C068";
+            case "rock": return "#B8A038";
+            case "bug": return "#A8B820";
+            case "ghost": return "#705898";
+            case "steel": return "#B8B8D0";
+            case "fire": return "#F08030";
+            case "water": return "#6890F0";
+            case "grass": return "#78C850";
+            case "electric": return "#F8D030";
+            case "psychic": return "#F85888";
+            case "ice": return "#98D8D8";
+            case "dragon": return "#7038F8";
+            case "dark": return "#705848";
+            case "fairy": return "#EE99AC";
+            case "unknown": return "#68A090";
+            case "shadow": return "#604E82";
+            default:
+                return "#fff"
+        }
     }
 
     const generatePokemonJSX = () => {
-        const { name, id, species, height, weight, types, sprites, abilities } = pokemonData;
+        const { name, id, species, height, weight, types, sprites, abilities, movesTypes } = pokemonData;
         const fullImageUrl = `https://pokeres.bastionbot.org/images/pokemon/${ id }.png`;
         const { front_default } = sprites;
 
@@ -236,41 +282,84 @@ const Pokemon = (props) => {
                             </ListItem>
                             <Divider component="li" />
                             <ListItem>
-                                <ListItemText primary="Height" secondary={ `${ Math.round(height * 0.1) }m` } />
+                                <ListItemText primary="Height" secondary={ `${ round(height * 0.1, 2) }m` } />
                             </ListItem>
                             <Divider component="li" />
                             <ListItem>
-                                <ListItemText primary="Weight" secondary={ `${ Math.round(weight * .1) }kg` } />
+                                <ListItemText primary="Weight" secondary={ `${ round(weight * .1, 2) }kg` } />
                             </ListItem>
                         </List>
                     </div>
                     <div className={ classes.section2 }>
                         <Typography gutterBottom variant="body1">
                             Types:
-                            </Typography>
-                        <div>
+                        </Typography>
+                        <React.Fragment>
                             { types.map((typesInfo) => {
                                 const { type } = typesInfo;
                                 const { name } = type;
                                 return (
-                                    <Chip className={ classes.chip } label={ `${ name }` } key={ name } />
+                                    <Chip
+                                        className={ classes.chip }
+                                        label={ `${ name }` }
+                                        key={ name }
+                                        color='primary'
+                                        style={ { backgroundColor: getColorByMoveType(name) } }
+                                    />
                                 );
                             }) }
-                        </div>
+                        </React.Fragment>
                     </div>
                     <div className={ classes.section2 }>
                         <Typography gutterBottom variant="body1">
                             Abilities:
-                            </Typography>
-                        <div>
+                        </Typography>
+                        <React.Fragment>
                             { abilities.map((abilitiesInfo) => {
                                 const { ability } = abilitiesInfo;
                                 const { name } = ability;
                                 return (
-                                    <Chip className={ classes.chip } label={ `${ name }` } key={ name } />
+                                    <Chip
+                                        className={ classes.chip }
+                                        label={ `${ name }` }
+                                        key={ name }
+                                    />
                                 );
                             }) }
-                        </div>
+                        </React.Fragment>
+                    </div>
+                    <div className={ classes.section2 }>
+                        <CardActions disableSpacing>
+                            <Typography gutterBottom variant="body1">
+                                Moves:
+                            </Typography>
+                            <StyledIconButton
+                                className={ clsx(classes.expand, {
+                                    [ classes.expandOpen ]: movesExpanded,
+                                }) }
+                                onClick={ handleExpandClick }
+                                aria-expanded={ movesExpanded }
+                                aria-label="show more"
+                                color="secondary"
+                            >
+                                <ExpandMoreIcon />
+                            </StyledIconButton>
+                        </CardActions>
+                        <Collapse in={ movesExpanded } timeout="auto" unmountOnExit>
+                            { movesTypes.map((move) => {
+                                const { name } = move;
+                                const { type } = move;
+                                return (
+                                    <Chip
+                                        className={ classes.chip }
+                                        label={ `${ name }` }
+                                        key={ name }
+                                        color='primary'
+                                        style={ { backgroundColor: getColorByMoveType(type) } }
+                                    />
+                                );
+                            }) }
+                        </Collapse>
                     </div>
                 </CardContent>
             </Card>

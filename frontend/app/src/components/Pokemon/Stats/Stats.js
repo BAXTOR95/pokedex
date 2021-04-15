@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     root: {
+        position: "relative",
         margin: "auto",
         height: "100%",
         width: "100%",
@@ -45,7 +46,7 @@ const Stats = () => {
                         // This more specific font property overrides the global property
                         fontSize: 16,
 
-                    }
+                    },
                 },
                 tooltips: {
                     backgroundColor: 'rgba(26, 53, 88, .3)',
@@ -55,14 +56,25 @@ const Stats = () => {
                 },
                 scale: {
                     angleLines: {
-                        display: false
+                        display: true,
+                        color: 'rgba(255, 255, 255, .3)'
+                    },
+                    gridLines: {
+                        display: true,
+                        color: 'rgba(26, 53, 88, .6)'
                     },
                     ticks: {
-                        suggestedMin: 50,
-                        suggestedMax: 100,
-                        fontSize: 15,
+                        display: false,
+                        suggestedMin: 30,
+                        suggestedMax: 120,
+                        fontSize: 10,
+                        backdropColor: 'rgba(26, 53, 88, .3)'
+                    },
+                    pointLabels: {
+                        fontSize: 15
                     }
-                }
+                },
+
             } } />
         </div>
     )

@@ -1,5 +1,6 @@
-import { put } from 'redux-saga/effects';
-import axios from '../../axios-poke-api';
+import { put, all } from 'redux-saga/effects';
+import axiosPoke from '../../axios-poke-api';
+import axios from 'axios';
 
 import { getSnackbarData } from '../../shared/utility';
 import * as actions from '../actions/index';
@@ -7,12 +8,24 @@ import * as actions from '../actions/index';
 export function* pokedexPokemonLoadSaga(action) {
     yield put(actions.pokedexPokemonLoadStart());
     try {
-        const response = yield axios.get(`${ action.pokemonId }`);
+        const response = yield axiosPoke.get(`${ action.pokemonId }`);
         const { data } = response;
+        const responseMoves = yield all(data.moves.map((movesInfo) => {
+            const { move } = movesInfo;
+            const { url } = move;
+            const res = axios.get(url);
+            return res;
+        }));
         const newData = {
             ...data,
             statsLabel: data.stats.map((info) => info.stat.name),
-            statsValue: data.stats.map((info) => info.base_stat)
+            statsValue: data.stats.map((info) => info.base_stat),
+            movesTypes: responseMoves.map((info) => {
+                return {
+                    name: info.data.name,
+                    type: info.data.type.name
+                }
+            })
         }
         yield put(actions.pokedexPokemonLoadSuccess(newData));
     } catch (error) {
