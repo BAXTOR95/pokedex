@@ -106,8 +106,6 @@ const PokedexList = (props) => {
     const onPokedexListLoad = useCallback(() => dispatch(actions.pokedexListLoad()), [ dispatch ]);
     const onFetchCapturedPokemons = useCallback(() => dispatch(actions.fetchCapturedPokemons(token, userId)), [ dispatch, token, userId ]);
 
-    console.log('hideCaptured', hideCaptured.checked);
-
     useEffect(() => {
         onPokedexListLoad();
         (isAuthenticated && onFetchCapturedPokemons());

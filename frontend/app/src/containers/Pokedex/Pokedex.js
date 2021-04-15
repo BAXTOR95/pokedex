@@ -10,6 +10,7 @@ import MuiTypography from '@material-ui/core/Typography';
 import PokedexList from '../../components/PokedexList/PokedexList';
 import Pokemon from '../../components/Pokemon/Pokemon';
 import Notifier from '../../components/Notifier/Notifier';
+import Stats from '../../components/Pokemon/Stats/Stats';
 
 const Accordion = withStyles({
     root: {
@@ -85,6 +86,15 @@ export const Pokedex = props => {
                             <Route
                                 path={ '/:pokemonId' }
                                 component={ Pokemon } />
+                            { !pokemonData && !loadingPokemon && !errorPokemon && <Typography>Select a Pokemon to see its details</Typography> }
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion square expanded={ expanded === 'panel2' } onChange={ handleChange('panel2') }>
+                        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+                            <Typography>Stats</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            { pokemonData && <Stats /> }
                             { !pokemonData && !loadingPokemon && !errorPokemon && <Typography>Select a Pokemon to see its details</Typography> }
                         </AccordionDetails>
                     </Accordion>

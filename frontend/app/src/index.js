@@ -6,7 +6,7 @@ import { applyMiddleware, createStore, compose, combineReducers } from "redux";
 import createSagaMiddleware from 'redux-saga';
 import { SnackbarProvider } from 'notistack';
 
-import './index.css';
+// import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import authReducer from './store/reducers/auth';
@@ -39,7 +39,7 @@ ReactDOM.render(
         <SnackbarProvider maxSnack={ 3 }>
             <BrowserRouter>
                 <React.StrictMode>
-                    <App className="App" />
+                    <App/>
                 </React.StrictMode>
             </BrowserRouter>
         </SnackbarProvider>

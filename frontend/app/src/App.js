@@ -22,6 +22,28 @@ const styles = {
         '*::-webkit-scrollbar-thumb': {
             backgroundColor: 'rgba(0,0,0,.1)',
             outline: '1px solid slategrey'
+        },
+        'body': {
+            margin: 0,
+            height: '100%',
+            backgroundColor: '#519afb',
+            fontFamily: 'sans-serif',
+            overflowX: 'hidden',
+        },
+        'h1, h2': {
+            margin: 0
+        },
+        'ul': {
+            padding: 0,
+            listStyle: 'none'
+        },
+        'App': {
+            display: 'flex',
+            alignItems: 'center',
+            height: '100vh',
+            overflow: 'hidden',
+            margin: 0,
+            fontFamily: 'system-ui'
         }
     }
 };
