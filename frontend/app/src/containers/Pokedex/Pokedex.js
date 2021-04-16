@@ -73,11 +73,11 @@ export const Pokedex = props => {
     return (
         <React.Fragment>
             <Notifier />
-            <Grid container spacing={ 2 }>
-                <Grid item xs>
+            <Grid container spacing={ 1 }>
+                <Grid item xs={12} sm>
                     <PokedexList />
                 </Grid>
-                <Grid item xs>
+                <Grid item xs={12} sm>
                     <Accordion square expanded={ expanded === 'panel1' } onChange={ handleChange('panel1') }>
                         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                             <Typography>Pokemon</Typography>
