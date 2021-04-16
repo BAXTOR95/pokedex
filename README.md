@@ -55,6 +55,9 @@ Inside the backend to install the requirements
 
 Get inside the `app` folder and type at the terminal
 
+Apply makemigrations by typing:
+### `python manage.py makemigrations`
+
 Apply migrations by typing:
 ### `python manage.py migrate`
 
