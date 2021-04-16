@@ -1,5 +1,7 @@
 # Pokedex Project coded by Brian Arriaga
 
+You can see the project running at [https://pokedex-13253.web.app/](https://pokedex-13253.web.app/)
+
 # Frontend
 
 ### `yarn install` or `npm install`
